@@ -7,6 +7,7 @@ using Microsoft.eShopWeb.ApplicationCore.Exceptions;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
 using Microsoft.eShopWeb.Infrastructure.Identity;
 using Microsoft.eShopWeb.Web.Interfaces;
+using System.Net.Http;
 
 namespace Microsoft.eShopWeb.Web.Pages.Basket;
 
@@ -19,18 +20,21 @@ public class CheckoutModel : PageModel
     private string _username = null;
     private readonly IBasketViewModelService _basketViewModelService;
     private readonly IAppLogger<CheckoutModel> _logger;
+    private readonly HttpClient _client;
 
     public CheckoutModel(IBasketService basketService,
         IBasketViewModelService basketViewModelService,
         SignInManager<ApplicationUser> signInManager,
         IOrderService orderService,
-        IAppLogger<CheckoutModel> logger)
+        IAppLogger<CheckoutModel> logger,
+        HttpClient client)
     {
         _basketService = basketService;
         _signInManager = signInManager;
         _orderService = orderService;
         _basketViewModelService = basketViewModelService;
         _logger = logger;
+        _client = client;
     }
 
     public BasketViewModel BasketModel { get; set; } = new BasketViewModel();
@@ -62,7 +66,7 @@ public class CheckoutModel : PageModel
             _logger.LogWarning(emptyBasketOnCheckoutException.Message);
             return RedirectToPage("/Basket/Index");
         }
-
+        //var response = await _client.PostAsJsonAsync<IEnumerable<BasketItemViewModel>>("https://functionapp120220702234604.azurewebsites.net/api/Function1", items);
         return RedirectToPage("Success");
     }
 
